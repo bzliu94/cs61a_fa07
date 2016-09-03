@@ -173,7 +173,7 @@ Works with UCB Scheme.
 
             (custom-set-variables '(scheme-program-name "stk"))
 
-  3. For stkdb.el, replace at line 275:
+  3. For /usr/local/lib/stk/slib/stkdb/stkdb.el, replace at line 275:
 
             (mapc '(lambda (x)
 
