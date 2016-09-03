@@ -20,7 +20,7 @@ For STk binary:
 
     sudo dpkg -i --force-architecture stk_4.0.1-1_amd64.deb
 
-Note that if we are after STK built from source (which I did not succeed at because we get segfault at run time), there is at least this change:
+Note that if we are after STK built from source (which I did not succeed at because we get "core dumped" at run time), there is at least this change:
 
     Typo in stk/Tcl/configure file at line 3222; instead of:
 
@@ -71,5 +71,7 @@ For proper Emacs integration:
     In Emacs, set scheme-program-name to stk by adding line to .emacs:
 
     (custom-set-variables '(scheme-program-name "stk"))
+
+    For stkdb.el, replace '(lambda with #'(lambda.
 
 
