@@ -171,7 +171,7 @@ Works with UCB Scheme.
 
   2. In Emacs, set scheme-program-name to stk by adding line to .emacs:
 
-            (custom-set-variables '(scheme-program-name "stk"))
+            (custom-set-variables '(scheme-program-name "stk-simply"))
 
   3. For /usr/local/lib/stk/slib/stkdb/stkdb.el, replace at line 275:
 
