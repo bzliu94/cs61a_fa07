@@ -6,7 +6,7 @@ Works with UCB Scheme.
 
 ## How to use with Ubuntu 64-bit 16.04 LTS
 
-* If you don't mind not building from source, prepare the STk binary.
+1. If you don't mind not building from source, prepare the STk binary.
 
   1. Get the RPM from UC Berkeley or from the folder "setup".
 
@@ -30,7 +30,7 @@ Works with UCB Scheme.
 
             sudo dpkg -i --force-architecture stk_4.0.1-1_amd64.deb
 
-* If you want to build STk as a 32-bit program using a 64-bit machine, create the binary.
+2. If you want to build STk as a 32-bit program using a 64-bit machine, create the binary.
 
   1. Get the source from UC Berkeley or from the folder "setup".
 
@@ -46,7 +46,7 @@ Works with UCB Scheme.
 
             system=MP-RAS-`awk '{print $3}' /etc/.relid'`
 
-    We have:
+      We have:
 
             system=MP-RAS-`awk '{print $3}' /etc/.relid`
 
@@ -70,15 +70,15 @@ Works with UCB Scheme.
 
             /usr/local/lib/slib/
 
-    To:
+      To:
 
             /usr/local/lib/stk/slib/
 
-    And change at line 29:
+      And change at line 29:
 
             (define (implementation-vicinity) "/3.99.3/")
 
-    To:
+      To:
 
             (define (implementation-vicinity) "/usr/local/lib/stk/1.3.6/")
 
@@ -86,15 +86,15 @@ Works with UCB Scheme.
 
             ac_cv_prog_ac_ct_CC="gcc"
 
-    To:
+      To:
 
             ac_cv_prog_ac_ct_CC="gcc -m32"
 
-    And change at line 6265:
+      And change at line 6265:
 
             if test "$CC" = "gcc" -a "$SH_CCFLAGS" != "" ; then
 
-    To:
+      To:
 
             if test "$CC" = "gcc -m32" -a "$SH_CCFLAGS" != "" ; then
 
@@ -104,7 +104,7 @@ Works with UCB Scheme.
 
   12. Use "make" and "sudo make install".
 
-* Follow the following steps for UCB Scheme extensions.
+3. Follow the following steps for UCB Scheme extensions.
 
   1. Get the source from UC Berkeley or from the folder "setup" and unpack the source, if you haven't already.
 
@@ -125,7 +125,7 @@ Works with UCB Scheme.
 
             MKDIR		= @MKDIR@
 
-    To:
+      To:
 
             MKDIR		= /bin/mkdir
 
@@ -141,7 +141,7 @@ Works with UCB Scheme.
 
             LDFLAGS = @LDFLAGS@
 
-    To:
+      To:
 
             LDFLAGS = "-L${PREFIX}/lib -lncurses")
 
@@ -149,7 +149,7 @@ Works with UCB Scheme.
 
   10. Run "sudo cp stkdb/*.scm stkdb/stkdb.el /usr/local/lib/stk/slib/stkdb".
 
-* Prepare proper Emacs integration.
+4. Prepare proper Emacs integration.
 
   1. Add to .emacs in home directory:
 
@@ -167,7 +167,7 @@ Works with UCB Scheme.
 
             (mapc '(lambda (x)
 
-    With:
+      With:
 
             (mapc #'(lambda (x)
 
