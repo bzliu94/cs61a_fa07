@@ -145,9 +145,19 @@ Works with UCB Scheme.
 
             LDFLAGS = "-L${PREFIX}/lib -lncurses")
 
-  9. Run "sudo mkdir /usr/local/lib/stk/slib/stkdb".
+  9. Run the following in texinfo-4.13/ to finish installing texinfo 4.13:
 
-  10. Run "sudo cp stkdb/*.scm stkdb/stkdb.el /usr/local/lib/stk/slib/stkdb".
+            make
+            sudo make install
+
+  10. Run the following in ucb/stkdb/ to install stkdb:
+
+            make
+            sudo make install
+
+  11. Run "sudo mkdir /usr/local/lib/stk/slib/stkdb".
+
+  12. Run "sudo cp stkdb/*.scm stkdb/stkdb.el /usr/local/lib/stk/slib/stkdb".
 
 4. Prepare proper Emacs integration.
 
