@@ -181,4 +181,8 @@ Works with UCB Scheme.
 
             (mapc #'(lambda (x)
 
+## Screenshot
+
+<img src="https://raw.githubusercontent.com/bzliu94/cs61a_fa07/master/setup/emacs_ucb_scheme.png" alt="emacs with ucb scheme" width="400">
+
 
