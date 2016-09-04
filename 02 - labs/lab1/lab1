@@ -1,0 +1,18 @@
+okay
+stk[-] (load "pigl.scm")okay
+stk[-] 
+(pigl 'scheme)emeschay
+stk[-] 
+(trace pigl)okay
+stk[-] 
+(pigl 'scheme).. -> pigl with wd = scheme
+.... -> pigl with wd = chemes
+...... -> pigl with wd = hemesc
+........ -> pigl with wd = emesch
+........ <- pigl returns emeschay
+...... <- pigl returns emeschay
+.... <- pigl returns emeschay
+.. <- pigl returns emeschay
+emeschay
+stk[-] 
+(transcript-off)
