@@ -4,6 +4,8 @@ Taken with Prof. Brian Harvey.
 
 Works with UCB Scheme.
 
+Course is about LISt Processing and survey of many ideas in computer science regularized to use one syntactic-structure-less language, taking advantage of the language's bias towards transparency and modularity.
+
 ## How to use with Ubuntu 64-bit 16.04 LTS
 
 1. If you don't mind not building from source, prepare the STk binary.
