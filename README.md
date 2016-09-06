@@ -4,7 +4,7 @@ Taken with Prof. Brian Harvey.
 
 Works with UCB Scheme.
 
-Course is about LISt Processing and survey of many ideas in computer science regularized to use one syntactic-structure-less language, taking advantage of the language's bias towards transparency and modularity.
+Course is about LISt Processing and survey of many ideas in computer science regularized to use one syntactic-structure-less language, taking advantage of the language's bias towards transparency and modularity. Course is said to be about structure (nested and enlarged lists) and interpretation (reacting to nested and enlarged lists).
 
 ## How to use with Ubuntu 64-bit 16.04 LTS
 
