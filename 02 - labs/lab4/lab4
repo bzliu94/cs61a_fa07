@@ -1,0 +1,16 @@
+okay
+STk> (define x (cons 4 5))
+x
+STk> (car x)
+4
+STk> (cdr x)
+5
+STk> (define y (cons 'hello 'goodbye))
+y
+STk> (define z (cons x y))
+z
+STk> (car (cdr z))
+hello
+STk> (cdr (cdr z))
+goodbye
+STk> (transcript-off)
