@@ -54,6 +54,9 @@
 ;; 4.  To evaluate a procedure call, we recursively evaluate all the
 ;; subexpressions.  We call APPLY-1 to handle the actual procedure invocation.
 
+;; added
+;; and: The expressions are evaluated from left to right. If any expression evaluates to false, false is returned; any remaining expressions are not evaluated. If all the expressions evaluate to true values, the value of the last expression is returned. If there are no expressions then true is returned.
+
 (define (eval-1 exp)
   (cond ((constant? exp) exp)
 	((symbol? exp) (eval exp))	; use underlying Scheme's EVAL
@@ -65,9 +68,11 @@
 		   #f
 		   ; have this way because exp is also a name for
 		   ; a function - 2 ^ x, which eval trips up on
-		   (begin
-		     ; (display exp)
-		     (and curr-value (cons 'and (cddr exp))))))))
+		   ; (begin
+					;   (display exp)
+		   (if (null? (cddr exp))
+		       curr-value
+		       (and curr-value (eval-1 (cons 'and (cddr exp)))))))))
 	((quote-exp? exp) (cadr exp))
 	((if-exp? exp)
 	 (if (eval-1 (cadr exp))
