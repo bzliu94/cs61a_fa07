@@ -1,0 +1,15 @@
+make "a 1
+
+to c
+print a
+end
+
+to b :a
+c
+end
+
+b 2
+
+; -> two printed, not one; have dynamic scope
+
+
