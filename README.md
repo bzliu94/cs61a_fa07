@@ -100,7 +100,7 @@ Course is about LISt Processing and survey of many ideas in computer science reg
 
             if test "$CC" = "gcc -m32" -a "$SH_CCFLAGS" != "" ; then
 
-  10. Run "./configure --prefix=/usr/local".
+  10. Run "/bash/sh configure --prefix=/usr/local".
 
   11. In stk/Makefile, change at line 57 "gcc" to "gcc -m32".
 
@@ -121,7 +121,7 @@ Course is about LISt Processing and survey of many ideas in computer science reg
 
   4. Run "cd ucb".
 
-  5. Run "./configure --prefix=/usr/local".
+  5. Run "/bash/sh configure --prefix=/usr/local".
 
   6. In ucb/stkdb/Makefile, change at line 12:
 
@@ -137,7 +137,7 @@ Course is about LISt Processing and survey of many ideas in computer science reg
             wget http://ftp.gnu.org/gnu/texinfo/texinfo-4.13.tar.gz
             gzip -dc < texinfo-4.13.tar.gz | tar -xf -
             cd texinfo-4.13
-            ./configure
+            /bash/sh configure
 
   8. Modify texinfo-4.13 Makefile to change at line 307:
 
@@ -145,7 +145,7 @@ Course is about LISt Processing and survey of many ideas in computer science reg
 
       To:
 
-            LDFLAGS = "-L${PREFIX}/lib -lncurses")
+            LDFLAGS = "-L${PREFIX}/lib -lncurses"
 
   9. Run the following in texinfo-4.13/ to finish installing texinfo 4.13:
 
@@ -160,6 +160,14 @@ Course is about LISt Processing and survey of many ideas in computer science reg
   11. Run "sudo mkdir /usr/local/lib/stk/slib/stkdb".
 
   12. Run "sudo cp stkdb/*.scm stkdb/stkdb.el /usr/local/lib/stk/slib/stkdb".
+
+  13. Run the following in ucb/slib/ to install a Scheme library slib:
+
+            sudo make install
+
+  14. Run the following once (using sudo) to build slib catalog once:
+
+            sudo stk-simply
 
 4. Prepare proper Emacs integration.
 
@@ -182,6 +190,8 @@ Course is about LISt Processing and survey of many ideas in computer science reg
       With:
 
             (mapc #'(lambda (x)
+
+Note: STk Scheme must be used with 32-bit source on a 64-bit Linux; 64-bit STk does not work.
 
 ## Screenshot
 
