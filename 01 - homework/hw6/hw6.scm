@@ -208,6 +208,8 @@
 
   our-personnel-file)
 
+; note that many implementations are scrambled w.r.t. those for division one
+
 (define (install-division2-package)
   ;; internal procedures
   ; division-specific constructors for deep record
@@ -505,7 +507,45 @@
 
 ; ex. 2.77
 
+; with data-directed style, we look up method based on operator name and types; 
+; with apply-generic, type is a list, where the list has number of elements 
+; that is equal to the number of arguments the method accepts; 
+; we use the call to put to anticipate apply-generic looking up the method; 
+; the types form a list because of scheme way of treating 
+; variable number of arguments as forming a list
+
+; however, for the case of fig. 2.24, apply-generic is called multiple times; 
+; we have a type hierarchy problem; when we have a two-level tag, 
+; we have e.g. ('complex 'rectangular 3 . 4); note that, with this, 
+; we're looking at the final result of nested constructor calls; 
+
+; arguments for a method call are kept separate 
+; from (possibly nested) type specification
+
+; a shortcoming is possibly that for binary methods 
+; we mainly support calls where the arguments 
+; are largely the same type; however, this could 
+; be mitigated by possibly having support 
+; for very general types for operands
+
+; we are dealing with a two-level tag system; i.e., complex package 
+; has methods defined in terms of methods for lower packages 
+; (i.e. rectangular or polar); as such, apply-generic is 
+; called up to twice per directly human-initiated call; 
+; we have a bigger slide, but we need a way of getting to the top; 
+; the addition of methods tagged using '(complex) 
+; into the method table gives us that ability; 
+; we call methods from complex and rectangular packages
+
+; specifically, adding certain methods into the method table 
+; allows us to take publicly-exposed methods that call apply-generic 
+; with the effect of dropping the external 'complex tag of 
+; an argument specifically complex (and not merely rectangular or polar) 
+; number
+
 ; ex. 2.79
+
+(define (equ? number1 number2) #t)
 
 ; ex. 2.80
 
