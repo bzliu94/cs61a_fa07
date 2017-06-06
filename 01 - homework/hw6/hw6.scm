@@ -543,6 +543,10 @@
 ; an argument specifically complex (and not merely rectangular or polar) 
 ; number
 
+; a key to how this works is we assume that moving from type tags 
+; at left towards right, we encounter gradually more specific types 
+; s.t. a type is a subtype of the type to its left
+
 ; ex. 2.79
 
 (define (equ? number1 number2) #t)
