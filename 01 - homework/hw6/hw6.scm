@@ -417,7 +417,91 @@
 
 ; ex. 2.75
 
+; alyssa - polar representation of a complex number
+(define (make-from-mag-ang r a)
+  (define (dispatch op)
+    (cond ((eq? op 'real-part)
+           (* r (cos a)))
+          ((eq? op 'imag-part)
+           (* r (sin a)))
+          ((eq? op 'magnitude) r)
+          ((eq? op 'angle) a)
+          (else
+           (error "Unknown op -- MAKE-FROM-MAG-ANG" op))))
+  dispatch)
+
+; note - footnote 48 says one limitation of this approach 
+; is that it permits only generic procedures of one argument, 
+; the polar representation of a complex number
+
 ; ex. 2.76
+
+; three options - explicit dispatch, data-directed style, message-passing style
+
+; i. explicit dispatch
+
+; changes required for adding new types:
+; add methods that we care about for the new type 
+; and for sake of modularity hope names don't conflict
+
+; changes required for adding new operations:
+; add types that we care about for the new operation
+; and for sake of modularity hope names don't conflict
+
+; ii. data-directed style
+
+; we care about initially grouping by row 
+; (fixed operator) and then by type 
+; in operation-and-type table 
+; s.t. row is associated with fixed operator 
+; and s.t. column is associated with fixed type
+
+; changes required for adding new types:
+; add a package for new type with supported methods
+
+; changes required for adding new operations:
+; modify type packages to include additional methods
+
+; iii. message-passing style
+
+; we care about initially grouping by column 
+; (fixed type) and then by operator 
+; in operation-and-type table 
+; s.t. row is associated with fixed operator 
+; and s.t. column is associated with fixed type
+
+; changes required for adding new types:
+; add a new object type with desired methods
+
+; changes required for adding new operations:
+; add operation to all object types 
+; that we wish to have support for this operation
+
+; iv. overall
+
+; which organization is best for system which has new types often added?
+; both data-directed and message-passing styles seem appropriate, 
+; with explicit dispatch seeming to be unusually disorganized; 
+; message-passing so far seems to support a constant number of arguments, 
+; so data-directed seems best overall; ignoring the argument count aspect, 
+; tying methods to types via message-passing could be better in that 
+; it could be more terse in that we could type less 
+; as part of implementing operations that share zero-th type 
+; (type of object to which the method belongs); we note that packages 
+; for data-directed style still are roughly associated with fixed type, 
+; which is also the case with objects (i.e. message-passing)
+
+; which organization is best for system which has new operations often added?
+; both data-directed and message-passing styles seem appropriate, 
+; with explicit dispatch seeming to be unusually disorganized; 
+; message-passing so far seems to support a constant number of arguments, 
+; so data-directed seems best overall; ignoring the argument count aspect, 
+; tying methods to types via message-passing could be better in that 
+; it could be more terse in that we could type less 
+; as part of implementing operations that share zero-th type 
+; (type of object to which the method belongs); we note that packages 
+; for data-directed style still are roughly associated with fixed type, 
+; which is also the case with objects (i.e. message-passing)
 
 ; ex. 2.77
 
