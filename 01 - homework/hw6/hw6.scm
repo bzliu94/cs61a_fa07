@@ -549,9 +549,11 @@
 
 ; ex. 2.79
 
-(define (equ? number1 number2) #t)
+; see "ex. 2.79, ex. 2.80.scm"
 
 ; ex. 2.80
+
+; see "ex. 2.79, ex. 2.80.scm"
 
 ; ex. 2.81
 
