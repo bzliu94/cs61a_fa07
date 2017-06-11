@@ -561,13 +561,19 @@
 
 ; ex. 2.83
 
+; see "ex. 2.83.scm"
+
 ; 2.
 
 ; scheme-1-related problem - map-1
 
+; have lambda, but no define
+
 ; 3.
 
 ; modify scheme-1 to have let special form
+
+; have lambda, but no define
 
 ; extra
 
