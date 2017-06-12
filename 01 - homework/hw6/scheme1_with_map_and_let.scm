@@ -211,3 +211,22 @@
 ;	      first
 ;	      '(the rain in spain))
 ; (t r i s)
+
+; added; deals with f as possibly a lambda, 
+; in which case it is possibly a list 
+; with formal parameter list 
+; and expression in the procedure body
+
+(define (map-1 f n)
+  (cond ((procedure? f)
+	 (map f n))
+	((lambda-exp? f)
+	 (map (lambda (x)
+		(eval-1 (substitute
+			 (caddr f)
+			 (cadr f)
+			 (list x)
+			 '())))
+	      n))))
+
+

@@ -567,13 +567,21 @@
 
 ; scheme-1-related problem - map-1
 
-; have lambda, but no define
+; must deal with different representation for lambda expressions
+
+; in general, have lambda, but no define; 
+; for this problem, this is not an issue; 
+; we can define a map-1
+
+; see "scheme1_with_map_and_let.scm"
 
 ; 3.
 
 ; modify scheme-1 to have let special form
 
 ; have lambda, but no define
+
+; see "scheme1_with_map_and_let.scm"
 
 ; extra
 
@@ -583,5 +591,7 @@
 
 ; this week is to do with generic operators and how to support many types cleanly using a table; 
 ; extra credit is to do with deducing types for compilation
+
+; see "type_inference.scm"
 
 
