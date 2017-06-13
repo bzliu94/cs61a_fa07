@@ -579,7 +579,34 @@
 
 ; modify scheme-1 to have let special form
 
-; have lambda, but no define
+; in general, have lambda, but no define; 
+; for this problem, this is not really an issue;
+; we are allowed to define a constant number 
+; of auxiliary methods
+
+; we owe simplicity of let special form implementation 
+; to certain design decisions already made 
+; by those who pose the question - we are given a way 
+; of looking ahead and replacing variables with values 
+; using a forbidden (bound) name list via substitute
+
+; we note that let has similar form to lambda; 
+; for lambda, we have a parameter list and expression body; 
+; for let, we have a binding pair list and expression body; 
+; if we use substitute, we will need to extract 
+; binding pair first elements 
+; and binding pair second elements
+
+; we note that substitute replaces as much 
+; as we can given name-value pairs and bound name list
+
+; as we want to support applicative-order evaluation 
+; (instead of normal-order evaluation) 
+; we use eval-1 with expressions for names for a let
+
+; we have free and bound variables in general, 
+; and we peel away free layer, 
+; which turns bound into free, and repeat
 
 ; see "scheme1_with_map_and_let.scm"
 
@@ -591,6 +618,21 @@
 
 ; this week is to do with generic operators and how to support many types cleanly using a table; 
 ; extra credit is to do with deducing types for compilation
+
+; we work bottom-up (from leaves up); 
+; this way, we minimize abiguity about types; 
+; and check for all conditions provided 
+; (which are thankfully very specific)
+
+; we make a tree so that we have access to parent pointers; 
+; all the criteria have to do with being 
+; a certain type of argument of a particular method
+
+; we don't support re-binding to a variable name, 
+; or if or cond; if/cond change path taken 
+; and re-binding can cause a different method body 
+; to be called for a given variable name; 
+; our type inference approach is quite basic
 
 ; see "type_inference.scm"
 

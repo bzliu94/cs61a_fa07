@@ -63,6 +63,8 @@
 	     (eval-1 (caddr exp))
 	     (eval-1 (cadddr exp))))
 	((lambda-exp? exp) exp)
+        ; added; must eval-1 substituted body with structure similar to what we do with lambda (but we don't just return expression unchanged); also, order of substitution matters if we have multiple bindings for same name; we need to modify substitute to treat let similar to lambda with bound references
+        ((let-exp? exp) (apply-1 exp '()))
 	((pair? exp) (apply-1 (eval-1 (car exp))      ; eval the operator
 			      (map eval-1 (cdr exp))))
 	(else (error "bad expr: " exp))))
@@ -85,6 +87,19 @@
 ;; the formal parameters in the body; the result of this substitution is
 ;; an expression which we can then evaluate with EVAL-1.
 
+; added
+; let, like with lambda, is left alone in eval-1, 
+; but gets processed using substitute and eval-1 
+; through apply-1; eval-1 is called s.t. we still 
+; have a constant number of eval-type calls per piece 
+; in overall expression if we have non-standard 
+; (non-digested) expressions (e.g. lambda body 
+; with collapsed arguments provided or let body 
+; with collapsed (?) definitions for certain names); 
+; we note that one extra eval-1 is enough 
+; if we are happy with partial normal 
+; instead of applicative order evaluation
+
 (define (apply-1 proc args)
   (cond ((procedure? proc)	; use underlying Scheme's APPLY
 	 (apply proc args))
@@ -93,7 +108,26 @@
 			     (cadr proc)    ; the formal parameters
 			     args           ; the actual arguments
 			     '())))	    ; bound-vars, see below
+        ((let-exp? proc)
+         (eval-1 (substitute (caddr proc)
+                             (get-firsts-from-pairs (cadr proc))
+                             ; added; if we want applicative 
+                             ; instead of normal order evaluation, 
+                             ; we should add eval-1 calls here
+                             (map eval-1 (get-seconds-from-pairs (cadr proc)))
+                             '())))
 	(else (error "bad proc: " proc))))
+
+; added
+; have more eval-1 calls in apply-1 for lambda and let 
+; because for these cases, we have hidden (unusually-placed) 
+; un-digested expressions
+
+(define (get-firsts-from-pairs pairs)
+  (map (lambda (x) (car x)) pairs))
+
+(define (get-seconds-from-pairs pairs)
+  (map (lambda (x) (cadr x)) pairs))
 
 
 ;; Some trivial helper procedures:
@@ -107,6 +141,9 @@
 (define quote-exp? (exp-checker 'quote))
 (define if-exp? (exp-checker 'if))
 (define lambda-exp? (exp-checker 'lambda))
+
+; added
+(define let-exp? (exp-checker 'let))
 
 
 ;; SUBSTITUTE substitutes actual arguments for *free* references to the
@@ -162,6 +199,10 @@
 ;; case of a primitive procedure as the actual argument value; these
 ;; procedures shouldn't be quoted.
 
+; added
+; substitute is preparatory and acts as look-ahead 
+; and is roughly independent of paths traveled by eval-1/apply-1
+
 (define (substitute exp params args bound)
   (cond ((constant? exp) exp)
 	((symbol? exp)
@@ -172,7 +213,18 @@
 	((lambda-exp? exp)
 	 (list 'lambda
 	       (cadr exp)
+               ; we add parameter names for lambda to bound list
 	       (substitute (caddr exp) params args (append bound (cadr exp)))))
+        ; added; free means "can currently be replaced" and bound means "cannot currently be replaced"; we un-peel free layers at a time
+        ((let-exp? exp)
+         (list 'let
+               (cadr exp)
+               ; added; while we are similar to lambda, 
+               ; we still need to accomodate different structure 
+               ; (i.e. how we find variable names) 
+               ; when adding to bound list
+               (substitute (caddr exp) params args (append bound (get-firsts-from-pairs (cadr exp))))))
+        ; this is useful for enforcing bound for components
 	(else (map (lambda (subexp) (substitute subexp params args bound))
 		   exp))))
 
@@ -228,5 +280,13 @@
 			 (list x)
 			 '())))
 	      n))))
+
+; added examples
+
+; (let ((a 1)) (let ((a 2)) (let ((a 3)) a)))
+; -> 3
+
+; (let ((a (* 2 3)) (b (- 2 4))) (let ((a (* 4 10))) (+ a b)))
+; -> 38
 
 
