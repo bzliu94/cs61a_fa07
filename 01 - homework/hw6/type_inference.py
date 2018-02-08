@@ -1,3 +1,8 @@
+# 2018-02-08
+
+# we support empty lists and gracefully non-address function applications 
+# s.t. the function is the result of evaluating an expression
+
 # 2018-01-18
 
 # we have a lot of implied lambdas, but we can ignore them as they are throwaway; they don't have names
@@ -5,6 +10,9 @@
 import string
 from basic_s_expression_parser_extended import *
 from collections import defaultdict
+
+NIL = 0
+COMPOSITE_FN = 1
 
 # "unknown" is un-set
 UNKNOWN = 0
@@ -217,8 +225,17 @@ class Node:
     else:
       # we have a leaf, with first element as name and with rest of elements for nodes
       curr_list = nested_lists
-      name = curr_list[0]
-      remaining_elements = curr_list[1 : ]
+      name = None
+      remaining_elements = None
+      if len(curr_list) == 0:
+        name = NIL
+        remaining_elements = []
+      else:
+        if isinstance(curr_list[0], list) == True:
+          name = COMPOSITE_FN
+        else:
+          name = curr_list[0]
+        remaining_elements = curr_list[1 : ]
       curr_node = Node(name, [], True, parent)
       child_nodes = [Node.convertToNodeHierarchyHelper(x, curr_node) for x in remaining_elements]
       curr_node.setChildren(child_nodes)
@@ -270,6 +287,8 @@ class Node:
 
 # need to pre-process to get body for a function definition
 line = "(define (foo a b c d e f) (f (append (a b) c '(b c)) (+ 5 d) (sentence (first e) f)))))"
+# line = "(define (foo a b) (lambda () a))"
+# line = "(define (foo a) ((lambda (x) x) a))"
 # need to extract variables that we care about; the variables we care about are the parameters to the given function
 value = parse(line, OVERALL_RE1, OVERALL_RE2, FIRST, FOLLOW)
 node = Node.convertToNodeHierarchy(value)

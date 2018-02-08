@@ -1,3 +1,8 @@
+; 2018-02-08
+
+; we support empty lists and gracefully non-address function applications 
+; s.t. the function is the result of evaluating an expression
+
 ; 2018-01-22
 
 ; finished translating from python
@@ -23,6 +28,9 @@
 ; extra credit
 
 ; type inference
+
+(define NIL_CODE 0)
+(define COMPOSITE_FN_CODE 1)
 
 (define UNKNOWN_CODE 0)
 (define PROCEDURE_CODE 1)
@@ -300,9 +308,17 @@
 	(let ((currNode (createNode name #f)))
 	  (postProcessNode currNode nil parentID)
 	  currNode))
-      (let ((currList nestedLists))
-	(let ((name (car currList))
-	      (remainingElements (cdr currList)))
+      (let ((currList nestedLists)
+	    (name nil)
+	    (remainingElements nil))
+	(begin
+	  (if (eq? (length currList) 0)
+	      (set! name NIL_CODE)
+	      (begin
+		(if (list? (car currList))
+		    (set! name COMPOSITE_FN_CODE)
+		    (set! name (car currList)))
+		(set! remainingElements (cdr currList))))
 	  (let ((currNode (createNode name #t)))
 	    (let ((childNodes
 		   (map (lambda (x)
@@ -353,6 +369,10 @@
 
 (define line '(define (foo a b c d e f)
 		(f (append (a b) c '(b c)) (+ 5 d) (sentence (first e) f))))
+
+; (define line '(define (foo a b) (lambda () a)))
+
+; (define line '(define (foo a) ((lambda (x) x) a)))
 
 (define rootNode (convertToNodeHierarchy line))
 
