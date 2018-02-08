@@ -246,6 +246,8 @@
 
 ; see "unique_rename.scm"
 
+; use frame hierarchy
+
 ; miscellaneous
 
 ; an environment is a collection of frames starting at a leaf or internal frame and proceeding to global frame
@@ -253,4 +255,9 @@
 ; book doesn't distinguish between frames for heap vs. stack; this distinction was just introduced by a TA
 
 ; we are a lot more comfortable using internal definitions after section 3.2
+
+; how we would use unique-rename to allow evaluation of a scheme program with only one (global) frame is: 
+; we coerce the program to be one big lambda, we re-write parameters and references to be uniquely-renamed, 
+; all functions can point to same frame and all locals can be kept in same frame, and this frame is our one frame
+
 
