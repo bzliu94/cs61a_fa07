@@ -262,7 +262,7 @@ class SExpr(Entity):
       for subexpression in entity.getSubexpressions():
        SExpr.memoizeClosestLambdaAncestorsForAllEntitiesHelper(subexpression)
   @staticmethod
-  def memoizeForLambdasParameterNameToPrimitive(entity):
+  def memoizeForLambdasDirectParameterNameToPrimitive(entity):
     SExpr.memoizeForLambdasDirectParameterNameToPrimitiveHelper(entity)
   @staticmethod
   def memoizeForLambdasDirectParameterNameToPrimitiveHelper(entity):
@@ -313,7 +313,7 @@ value = parse(line, OVERALL_RE1, OVERALL_RE2, FIRST, FOLLOW)
 root_sexpr = SExpr.constructUsingNestedTokenLists(value)
 SExpr.preorderNumberDirectLambdaParameterPrimitives(root_sexpr, 1)
 SExpr.memoizeClosestLambdaAncestorsForAllEntities(root_sexpr)
-SExpr.memoizeForLambdasParameterNameToPrimitive(root_sexpr)
+SExpr.memoizeForLambdasDirectParameterNameToPrimitive(root_sexpr)
 SExpr.memoizeReferenceIDsForReferencePrimitives(root_sexpr)
 print root_sexpr.toTranslatedString()
 
