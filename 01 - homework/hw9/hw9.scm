@@ -663,6 +663,9 @@
 
 ; inspired by wikipedia article on cycle detection
 
+; time is O(lambda + mu) = O(n); 
+; space is O(1)
+
 (define (floyd l)
   (define (f pair)
     (cdr pair))
@@ -1051,30 +1054,64 @@
 ; if we don't reach the frontier, we also can recognize this 
 ; using special symbols and we know to stop
 
+; if first attempt ends at start, function is identity; 
+; if any attempt ends at stop1, we need to add a car to outside; 
+; if any attempt ends at stop2, we need to add a cdr to outside; 
+; we stop enlargening composed function when we end at non-stop
+
 (define (cxr-name f)
-  #t)
+  (define start (cons nil nil))
+  (define stop1 (cons nil nil))
+  (define stop2 (cons nil nil))
+  (set-car! start stop1)
+  (set-cdr! start stop2)
+  (set-car! stop1 stop1)
+  (set-cdr! stop1 stop1)
+  (set-car! stop2 stop2)
+  (set-cdr! stop2 stop2)
+  (define lowest-safe-pair start)
+  (define (cxr-name-helper)
+    (let ((result (f start)))
+      (let ((result1 (eq? result lowest-safe-pair))
+	    (result2 (eq? result stop1))
+	    (result3 (eq? result stop2)))
+	(list result1 result2 result3))))
+  (define (loop1)
+    (let ((curr-result (cxr-name-helper)))
+      (let ((see-identity (car curr-result))
+	    (see-car (cadr curr-result))
+	    (see-cdr (caddr curr-result)))
+	(cond (see-identity nil)
+	      (see-car (begin
+			 (let ((newPair (cons stop1 stop2)))
+			   (set-car! lowest-safe-pair newPair)
+			   (set-cdr! lowest-safe-pair nil)
+			   (set! lowest-safe-pair newPair)
+			   (cons 'a (loop1)))))
+	      (see-cdr (begin
+			 (let ((newPair (cons stop1 stop2)))
+			   (set-car! lowest-safe-pair nil)
+			   (set-cdr! lowest-safe-pair newPair)
+			   (set! lowest-safe-pair newPair)
+			   (cons 'd (loop1)))))))))
+  (let ((reversed-center-symbols (loop1)))
+    (let ((center-symbols (reverse reversed-center-symbols)))
+      (if (eq? (length center-symbols) 0)
+	  (error "function is identity")
+	  (let ((center-str (apply string-append (map symbol->string center-symbols))))
+	    (let ((whole-str (string-append "c" center-str "r")))
+	      (string-upper whole-str)))))))
+
+(display (cxr-name (lambda (x) (cdr (car x)))))
+(display "\n")
+
+(display (cxr-name (lambda (x) (car (cdr x)))))
+(display "\n")
+
+; (display (cxr-name (lambda (x) x)))
+; (display "\n")
 
 (display (cxr-name (lambda (x) (cadr (cddar (cadar x))))))
+(display "\n")
 
-; have cycles
-
-(define gadget
-  (cons nil nil))
-
-(define car-gadget
-  (cons nil nil))
-
-(define cdr-gadget
-  (cons nil nil))
-
-(set-car! gadget car-gadget)
-(set-cdr! gadget cdr-gadget)
-(set-car! car-gadget car-gadget)
-(set-cdr! car-gadget cdr-gadget)
-(set-car! cdr-gadget car-gadget)
-(set-cdr! cdr-gadget cdr-gadget)
-
-(display (eq? (car gadget) car-gadget))
-
-(display (eq? (cadar gadget) car-gadget))
 
