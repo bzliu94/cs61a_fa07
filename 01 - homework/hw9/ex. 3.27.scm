@@ -12,10 +12,12 @@
     (if record
         (cdr record)
         false)))
+
 (define (assoc key records)
   (cond ((null? records) false)
         ((equal? key (caar records)) (car records))
         (else (assoc key (cdr records)))))
+
 (define (insert! key value table)
   (let ((record (assoc key (cdr table))))
     (if record
@@ -23,6 +25,7 @@
         (set-cdr! table
                   (cons (cons key value) (cdr table)))))
   'ok)
+
 (define (make-table)
   (list '*table*))
 
@@ -71,7 +74,7 @@
 
 ; a) draw environment diagram for (memo-fib 3)
 
-; see "ex. 3.27 a.png"
+; see "ex. 3.27 a - 1.png", "ex. 3.27 a - 2.png"
 
 ; as per assignment instructions, we technically
 ; don't need to draw the environment diagram;
@@ -107,5 +110,13 @@
 ; which is far too late for us to see a speed-up using, 
 ; unless we have a huge number of queries, in which case 
 ; we could still be far slower than we could be
+
+; extra:
+
+; let is syntactic sugar for a way of using lambda
+
+; we treat all our six methods associated with memo-fib as non-primitive and using frames
+
+; frame hierarchy depth is based on definition depths, taking into account sugar (e.g. let becoming lambda)
 
 
