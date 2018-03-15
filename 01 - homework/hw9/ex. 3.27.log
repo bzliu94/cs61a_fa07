@@ -1,0 +1,14 @@
+okay
+STk> (load "ex. 3.27.scm")
+.. -> memo-fib with x = 3
+.... -> memo-fib with x = 2
+...... -> memo-fib with x = 1
+...... <- memo-fib returns 1
+...... -> memo-fib with x = 0
+...... <- memo-fib returns 0
+.... <- memo-fib returns 1
+.... -> memo-fib with x = 1
+.... <- memo-fib returns 1
+.. <- memo-fib returns 2
+okay
+STk> (transcript-off)
