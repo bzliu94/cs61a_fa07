@@ -64,13 +64,13 @@
 
 ; a few examples:
 
-; r2 r1 w2 w1 r3 w3 (equivalent to N/A P1 M): 100 -> 110 -> 55
+; (i) r2 r1 w2 w1 r3 w3 (equivalent to N/A P1 M): 100 -> 110 -> 55
 
-; r3 r1 w3 w1 r2 w2 (equivalent to N/A P1 P2): 100 -> 110 -> 90
+; (ii) r3 r1 w3 w1 r2 w2 (equivalent to N/A P1 P2): 100 -> 110 -> 90
 
-; r2 r3 w2 w3 r1 w1 (equivalent to N/A M P1): 100 -> 50 -> 60
+; (iii) r2 r3 w2 w3 r1 w1 (equivalent to N/A M P1): 100 -> 50 -> 60
 
-; r1 r3 w1 w3 r2 w2 (equivalent to N/A M P2): 100 -> 50 -> 30
+; (iv) r1 r3 w1 w3 r2 w2 (equivalent to N/A M P2): 100 -> 50 -> 30
 
 ; (see "ex. 3.38 b - 1.png", "ex. 3.38 b - 2.png")
 
@@ -187,5 +187,31 @@
 ; r_b1 r_b2 r_b3 w_b1 r_a1 r_a2 w_a1: 10 -> 10 ^ 3 = 1,000 -> 1,000 * 1,000 = 1,000,000
 
 ; unique outcomes are: 1,000,000
+
+; ex. 3.41
+
+; ben bitdiddle is right, though his approach is technically overkill
+
+; the approach is overkill because we can view withdraw and deposit as writes and balance retrieval as a read; then, we view the problem as an instance of readers-writers, which functions by having writes be atomic w.r.t. reads and other writes and by having reads be non-atomic w.r.t. other reads; the approach he suggests satisfies these changes and adds on top of them having reads be atomic w.r.t. other reads
+
+; still, the question does not ask about whether the approach is optimal; so, a specific example where we improve is the following:
+
+; as a guide, the important part that affects correctness here is that write is atomic w.r.t. read
+
+; (here, the write is deposit and read is balance retrieval)
+
+; (assume that we have a joint account that begins with a balance of $100)
+
+; person a: DEPOSIT $20 (w_a1), RETRIEVE-BALANCE (r_a1)
+
+; person b: RETRIEVE-BALANCE (r_b1), DEPOSIT half of read balance (w_b1)
+
+; before change: {w_a1, r_a1, r_b1}, {w_b1} => r_b1, w_a1, r_a1, w_b1 => 100 -> 120 -> 120 -> 70
+
+;	OR: w_a1, r_a1, r_b1, w_b1 => 100 -> 120 -> 120 -> 60
+
+; after change: {w_a1}, {r_a1}, {r_b1}, {w_b1} => w_a1, r_a1, r_b1, w_b1 => 100 -> 120 -> 120 -> 60
+
+; (note that having two possible outcomes for this specific "equivalence class" sequence for the pre-change account implementation shows that we were sometimes inconsistent and therefore were wrong overall, as opposed to having one possible outcome for this sequence for the post-change account implementation)
 
 
