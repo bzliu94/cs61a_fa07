@@ -214,4 +214,12 @@
 
 ; (note that having two possible outcomes for this specific "equivalence class" sequence for the pre-change account implementation shows that we were sometimes inconsistent and therefore were wrong overall, as opposed to having one possible outcome for this sequence for the post-change account implementation)
 
+; ex. 3.42
+
+; ben bitdiddle is right; this is a safe change to make and there are no differences in what concurrency is allowed by the version with withdraw and deposit repeatedly serialized and by the version with withdraw and deposit serialized once during initialization
+
+; the key is to look ahead and see how serializers are defined; a call to a post-serialize method is atomic w.r.t. a separate call to that post-serialize method because both use the same mutex associated with the one serializer for that post-serialize method
+
+; out of curiosity, we experiment with two groups of given implementations for parallel-execute and test-and-set! and see what happens when we supply parallel-execute re-serialized versions of a method vs. supply parallel-execute same serialized version of a method multiple times; the results are in "PE-TAS-experiments.scm"
+
 
