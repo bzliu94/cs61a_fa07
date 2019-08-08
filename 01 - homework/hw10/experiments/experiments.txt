@@ -1,0 +1,22 @@
+2019-08-06
+
+We are conducting experiments on behavior of parallel-execute for UCB Scheme 1.3.6. We care because section 3.4.2 from SICP and exercise 3.39 brings this up. Concurrency material from CS 61A for 2007 can be difficult to make sense of because it is around that time that we begin to see multi-core processors (i.e. around 2005). STk Scheme, which ceased to be developed (ignoring its successor STklos) around 1999, appears to have no built-in support for taking advantage of multiple cores. We then must expect no speed-up from a concurrency-related tool such as parallel-execute. Further, the observed performance is worse than just if we have only one core active at a time. We are thus interested in performing experiments for purpose of understanding two ways that parallel-execute is implemented and how design decisions help determine running time in practice.
+
+First, it is important to note that UCB Scheme source comes in four categories: STk, SLIB, UCB-only (including SCM-inspired), SICP textbook.
+
+There are two strains of make-shift implementations of parallel-execute that come with UCB Scheme. The first uses arbiters (i.e. a light-weight mutex according to SCM interface) and timer-based polling (i.e. via alarm and according to SCM interface) from berkeley.scm. The second uses a thread scheduler using continuations and green threads from concurrent.scm. These two approaches exist partially because hardware-implemented atomic test-and-set! are not available as part of STk Scheme. Their purpose is to avoid getting wrong behavior via e.g. race conditions. In principle, it is only at test-and-set! calls that we could need to wait for a different thread to make progress; it is important to note that both approaches behave s.t. we instead always force a change of thread for each of those calls.
+
+If we already have correctness, then what is the issue? With certain applications, we can see that the speed is much worse than we expect with assumption that we use a single core or processor. This is because, as we shall show, the first approach uses slow-to-react timers and the second uses a sub-par thread selection algorithm for thread scheduler (i.e. it uses random selection and does not rule out use of finished threads as part of that selection). We will then proceed to attempt to fix the second approach as much as we are able to.
+
+We note that definition of test-and-set! from berkeley.scm (i.e. the first approach) as given to us is incorrect. It is if acquiring an arbiter fails that we should repeatedly re-attempt to acquire it instead of vice versa. It makes sense that this could be wrong given that (1) only recently did multi-core processors begin to appear; and (2) alarms if activated can be used to slowly prod us towards finishing threads that are rightly or un-rightly made to sleep. Also, it is important to note that we approach target values slower via alarms if we keep running parallel-execute because we are (unless we put in more effort) sharing a thread scheduler via a shared arbiter.
+
+Group #1: berkeley.scm unchanged -- broken test-and-set! and shared arbiter
+Group #2: berkeley.scm improved -- fixed test-and-set! and without alarm
+Group #3: concurrent.scm unchanged -- with random thread selection and expensive alive-based filters
+Group #4: concurrent.scm improved -- with FIFO thread selection and expensive alive-based filters
+
+We allow FIFO because it is a relatively simple strategy that does not require randomization and because (given that we assume we only have one resource) ahead of time we know there can be no deadlock.
+
+--
+
+
