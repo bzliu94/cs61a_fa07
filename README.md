@@ -50,27 +50,27 @@ Note: STk Scheme must be coerced to expect a 32-bit system; 64-bit STk does not 
 
   3. Change into the folder "stk-1.3.6".
 
-  3. Fix a typo in stk/Tcl/configure at line 3222; instead of:
+  4. Fix a typo in stk/Tcl/configure at line 3222; instead of:
 
          system=MP-RAS-`awk '{print $3}' /etc/.relid'`
 
-      We have:
+     We have:
 
          system=MP-RAS-`awk '{print $3}' /etc/.relid`
 
-  4. Run "cd stk", then "make clean".
+  5. Run "cd stk", then "make clean".
 
-  5. Make sure you are using gcc version less than 5 - say, 4.8.
+  6. Make sure you are using gcc version less than 5 - say, 4.8.
 
          sudo apt-get install g++-4.8
 
      (Make sure this version is active via update-alternatives.)
 
-  6. Make sure you are ready to build 32-bit on a 64-bit machine using compile and link flag "-m32".
+  7. Make sure you are ready to build 32-bit on a 64-bit machine using compile and link flag "-m32".
 
          sudo apt-get install g++-4.8-multilib
 
-  7. Install 32-bit-related libraries.
+  8. Install 32-bit-related libraries.
 
          sudo apt-get install libsm6:i386
          sudo apt-get install libx11-6:i386
@@ -78,43 +78,43 @@ Note: STk Scheme must be coerced to expect a 32-bit system; 64-bit STk does not 
 
      (If libx11-6:i386 does not work, perhaps libx11-dev will.)
 
-  8. Change two settings in stk/Lib/STk.init; change at line 34:
+  9. Change two settings in stk/Lib/STk.init; change at line 34:
 
          /usr/local/lib/slib/
 
-      To:
+     To:
 
          /usr/local/lib/stk/slib/
 
-      And change at line 29:
+     And change at line 29:
 
          (define (implementation-vicinity) "/3.99.3/")
 
-      To:
+     To:
 
          (define (implementation-vicinity) "/usr/local/lib/stk/1.3.6/")
 
-  9. In stk/configure, change references to "gcc"; change at line 1388:
+  10. In stk/configure, change references to "gcc"; change at line 1388:
 
-         ac_cv_prog_ac_ct_CC="gcc"
+          ac_cv_prog_ac_ct_CC="gcc"
 
       To:
 
-         ac_cv_prog_ac_ct_CC="gcc -m32"
+          ac_cv_prog_ac_ct_CC="gcc -m32"
 
       And change at line 6265:
 
-         if test "$CC" = "gcc" -a "$SH_CCFLAGS" != "" ; then
+          if test "$CC" = "gcc" -a "$SH_CCFLAGS" != "" ; then
 
       To:
 
-         if test "$CC" = "gcc -m32" -a "$SH_CCFLAGS" != "" ; then
+          if test "$CC" = "gcc -m32" -a "$SH_CCFLAGS" != "" ; then
 
-  10. Run "/bash/sh configure --prefix=/usr/local".
+  11. Run "/bash/sh configure --prefix=/usr/local".
 
-  11. In stk/Makefile, change at line 57 "gcc" to "gcc -m32".
+  12. In stk/Makefile, change at line 57 "gcc" to "gcc -m32".
 
-  12. Use "make" and "sudo make install".
+  13. Use "make" and "sudo make install".
 
 ### Follow the following steps for UCB Scheme extensions.
 
@@ -139,7 +139,7 @@ Note: STk Scheme must be coerced to expect a 32-bit system; 64-bit STk does not 
 
          MKDIR		= @MKDIR@
 
-      To:
+     To:
 
          MKDIR		= /bin/mkdir
 
@@ -155,7 +155,7 @@ Note: STk Scheme must be coerced to expect a 32-bit system; 64-bit STk does not 
 
          LDFLAGS = @LDFLAGS@
 
-      To:
+     To:
 
          LDFLAGS = "-L${PREFIX}/lib -lncurses"
 
@@ -166,16 +166,16 @@ Note: STk Scheme must be coerced to expect a 32-bit system; 64-bit STk does not 
 
   10. Run the following in ucb to install UCB extensions:
 
-         make
-         sudo make install
+          make
+          sudo make install
 
   11. Run "sudo mkdir /usr/local/lib/stk/slib/stkdb".
 
   12. From folder ucb/stkdb, run "sudo cp *.scm stkdb.el /usr/local/lib/stk/slib/stkdb".
 
-  14. Run the following once (using sudo) to build slib catalog once:
+  13. Run the following once (using sudo) to build slib catalog once:
 
-         sudo stk-simply
+          sudo stk-simply
 
 ### Prepare proper Emacs integration.
 
@@ -193,18 +193,40 @@ Note: STk Scheme must be coerced to expect a 32-bit system; 64-bit STk does not 
 
   3. Add the following line to .emacs:
 
-         (load "stkdb")  
+         (load "stkdb")
 
-  3. For /usr/local/lib/stk/slib/stkdb/stkdb.el, replace at line 275:
+  3. One may wish to make all files editable
+
+  4. For /usr/local/lib/stk/slib/stkdb/stkdb.el, replace at line 275:
 
          (mapc '(lambda (x)
 
-      With:
+     With:
 
          (mapc #'(lambda (x)
+
+     (One may wish to make the contents of /usr/local/lib/stk/slib/stkdb editable via root or via a non-root user by first using chmod.)
+
+### For Ubuntu 18.04 LTS
+
+  1. Some other package such as libx11-dev:i386 for building STk may be necessary.
+
+  2. In later versions of Ubuntu, Emacs 23 is no longer obtainable via package. For versions 24 and up (and in particular version 26), there may be a bug with empty Debugging and Scheme dynamically added menus when editing scheme files. To get around this issue, we add the following lines to .emacs file:
+
+         ; deal with missing contents of menus
+         (defun prepare-menus-for-scheme ()
+         (menu-bar-mode -1)
+         (menu-bar-mode 1))
+         (add-hook 'scheme-mode-hook 'prepare-menus-for-scheme)
 
 ## Screenshot
 
 <img src="https://raw.githubusercontent.com/bzliu94/cs61a_fa07/master/setup/emacs_ucb_scheme.png" alt="emacs with ucb scheme" width="400">
+
+## Caveat emptor
+
+This approach has been successful for a machine purchased in ~2014, but when we tried to use it for a machine purchased in 2007, we initially encountered segfaults when running certain programs with stk-simply. Then, after attempts to debug the problem, almost miraculously the problem disappeared. We are unable to reproduce the problem and as a result we are unable to diagnose it. As a warning, this approach may not work for you.
+
+The problem involves report-error!!, message "segmentation fault: returning to toplevel", parallel-execute (whose implementation is provided by UCB Scheme extensions and whose concept comes from SICP section 3.4). We suspect it has to do with compiling STk and UCB Scheme extensions on 32-bit architecture and stale Makefile files, but again we do not know for sure.
 
 
