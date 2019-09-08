@@ -211,7 +211,7 @@ Note: STk Scheme must be coerced to expect a 32-bit system; 64-bit STk does not 
 
   1. Some other package such as libx11-dev:i386 for building STk may be necessary.
 
-  2. In later versions of Ubuntu, Emacs 23 is no longer obtainable via package. For versions 24 and up (and in particular version 26), there may be a bug with empty Debugging and Scheme dynamically added menus when editing scheme files. To get around this issue, we add the following lines to .emacs file:
+  2. In later versions of Ubuntu, Emacs 23 is no longer obtainable via package. For versions 24 and up (and in particular version 26), there may be a bug with empty Debugging and Scheme dynamically added menus when editing scheme files. To get around this issue, we add the following lines to .emacs file after the lines we have already added from steps in Emacs integration section:
 
          ; deal with missing contents of menus
          (defun prepare-menus-for-scheme ()
