@@ -19,4 +19,14 @@ We allow FIFO because it is a relatively simple strategy that does not require r
 
 --
 
+Some trivia
+
+* First commercial dual-core processor in world was POWER4 by IBM in 2001.
+* First commercial dual-core processor by Intel was Pentium D 820 Smithfield in 2005.
+* First commercial dual-core processor by AMD was Athlon 64 X2 3800+ Manchester in 2005.
+* First commercial dual-core processor by Intel for laptop was Core 2 Duo E6320 Conroe in 2006.
+* First commercial dual-core processor by AMD for laptop was Turion 64 X2 Taylor in 2006.
+
+--
+
 
