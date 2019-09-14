@@ -4,12 +4,34 @@
 ;;
 ;; Requires STk (for "procedure-body" and first-class environments).
 
+; uncode, procedure-body, environments are supported by STk
+
+; regarding non-intrusive approach -- we may have a bug s.t. the problem is off-by-one; if we try to dequeue and the queue is empty but we have a most-recently-popped-process that we have delayed adding to the queue, occasionally we will fail because the queue if empty should fall back to the item we delayed adding as result for dequeue as opposed to crash; when we start to enable pausing for e.g. env-lookup-raw, then such a situation could arise and we may crash
+
+; we note that with a buggy non-intrusive use of process queue we do not crash when we only have context switch for test-and-set!; when we have context switches at other locations, we do generally crash if we have buggy non-intrusive approach
+
+; added and requires queue module from SLIB
+(define process-queue (make-queue))
+(define most-recently-popped-process (list nil))
+(define (FIFO-select)
+  (begin
+    (if (queue-empty? process-queue)
+      (begin
+        most-recently-popped-process)
+      (let ((past-process (dequeue! process-queue)))
+        (begin
+          (if (continuation? (car most-recently-popped-process)) 
+            (enqueue! process-queue most-recently-popped-process))
+          (set! most-recently-popped-process past-process)
+          past-process)))))
+
 (define call/cc call-with-current-continuation)
 
 (define (parallel-execute . thunks)
   (apply run-concurrently-with-env
-         random
-	 ; (lambda x 0)
+         ; random
+         ; added
+         FIFO-select
          (map (lambda (thunk)
                 (cons (list (uncode (procedure-body thunk)))
 		      (make-virtual-env (procedure-environment thunk)) ))
@@ -24,25 +46,36 @@
 		(cons x (make-virtual-env (global-environment))) )
 	      exprs )))
 
+; having repeated liveness check for threads means we are slower than we could be
+
+; this is heavily modified
 (define (run-concurrently-with-env select . exprs-with-envs)
   (let ((threads
 	 (map (lambda (exp-env)
-		(list (call/cc
-		       (lambda (cont)
-			 (let ((scheduler (call/cc cont)))
+		; there is a gratuitous wrapping list for each "thread"
+		(list (call/cc ; primary continuation re-enters inside list
+		       (lambda (cont) ; secondary continuation re-enters at let-bind
+			 (let ((scheduler (call/cc (lambda (x) (cont x)))))
 			   (scheduler (myeval (car exp-env)
 					      (cdr exp-env)
 					      scheduler )))))))
+			   ; myeval represents the value for a call of a given procedure
 	      exprs-with-envs )))
-    (let loop ()
-      (let ((active-threads
-             (filter (lambda (x) (continuation? (car x))) threads) ))
-        (if (null? active-threads)
-            (map car threads)
-            (let ((active (list-ref active-threads
-                                    (select (length active-threads)) )))
-              (set-car! active (call/cc (car active)))
-              (loop) ))))))
+    (begin
+      ; remember that threads are each wrapped in a list; line below is added
+      (for-each (lambda (x) (begin (enqueue! process-queue x))) threads)
+      (let loop ()
+        (let ((active-threads
+               (filter (lambda (x) (continuation? (car x))) threads) ))
+	  (if (null? active-threads)
+	      ; when we are done with active threads, 
+	      ; give list of return values for all original threads
+	      (map car threads)
+              (let ((active (select)))
+		; passing to a secondary (or later) continuation 
+		; a cont. that re-enters inside a set-car!
+		(set-car! active (call/cc (lambda (x) ((car active) x))))
+		(loop) )))))))
 
 (define (make-virtual-env real-env)
   (cons

@@ -1,50 +1,35 @@
-; 2019-08-08
+; 2019-08-27
 
-; group #3 -- use random thread selection and expensive alive-based filters -- uses concurrent.scm
+; group #4 -- use FIFO thread selection and expensive alive-based filters -- uses concurrent.scm
 
 ; advantages:
-; - uses continuations directly, does not use multi-processing SLIB module 
-;   (for process functionality) or SCM-inspired arbiters or SCM-inspired alarms; 
-;   it is mostly self-contained except for use of continuations
-; - requires few to no changes to concurrent.scm; if we wish to have 
-;   manual context switch as for sub-case four, we must add a special form 
-;   to concurrent.scm
+; - is mostly self-contained except for use of continuations
 
 ; disadvantages:
 ; - harder to perform manual context switches
-; - we repeatedly filter to get active threads s.t. we repeatedly start 
-;   from full thread list and filter it; as a result, it is correct 
-;   but slower than it could be
-
-; notes:
-; - time method hides return value
+; - it is slower than groups one and two because even though we avoid expensive active-based filter; this is due to overhead from thread scheduler
 
 ; important:
-; - random thread selection has large impact on time required, 
-;   so for parallel-execute cases we set n to be much lower 
-;   -- we go from 300 down to 10
-; - has many built-in scheduler calls by modifying many special forms, 
-;   which can slow execution down
-; - for sub-case four, we have more clobbering; with random thread selection policy, 
-;   it is harder to get back to a thread that has already been paused -- for this reason, 
-;   we have more clobbering and the expected value for the variable we increment 
-;   is lower (i.e. for n = 300, we go from ~155 for groups #1 and #2 to ~25)
+; - because we use FIFO thread selection instead of random, we get same clobbering behavior as with groups #1 and #2; expected value for variable we increment for n = 300 is back to ~155 instead of ~25
 
-; have four sub-cases: 
-; 1. do not use parallel-execute and perform methods one-by-one
-; 2. use parallel-execute with single serializer
-; 3. use parallel-execute with many serializers
-; 4. use parallel-execute with arbitrary clobbering
+; notes:
+; - we have non-intrusive and intrusive ways to get 
+;   non-random-based thread selection for thread scheduler
+; - we are using continuations to get green threads but do not actually use more than one core
 
-; conclusion:
-; we need to change to e.g. FIFO thread selection policy
-
-; ideal value for n for sub-cases: 300, 10, 10, 100
-
-(load "includes/concurrent_modified.scm")
+; non-intrusive
+(load "includes/concurrent_modified1.scm")
+; intrusive
+; (load "includes/concurrent_modified2.scm")
 (load "includes/serial.scm")
 
 ; this is for general use
+
+; we might want to know the size of the process queue, 
+; in which case the following method can help
+(define (listify-process-queue)
+  (let ((lst (queue:first-pair process-queue)))
+    lst))
 
 (define (getFilledList numTimes value)
   (if (eq? numTimes 0)

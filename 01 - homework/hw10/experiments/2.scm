@@ -12,6 +12,8 @@
 ; - sub-case four does not require test-and-set!; 
 ;   it is purely an experiment in clobbering by way 
 ;   of dealing directly with process scheduler
+; - alarm-interrupt default definition found in slib/process.scm; 
+;   alarm by default provides one second per process
 
 ; important:
 ; - serializer is implemented the way it is in SICP (i.e. via make-mutex); 

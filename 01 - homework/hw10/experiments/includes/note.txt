@@ -1,4 +1,8 @@
-"originals" is used loosely; paths in loads may be changed
+"includes" are roughly originals, but paths in loads may be changed
+
+--
+
+sometimes, we may desire that parallel-execute gives return values s.t. they are what you get when you call each given method individually
 
 --
 
